@@ -39,3 +39,13 @@ WHERE (ol.UnitPrice>100 or ol.Quantity>20)
 order by quarter,third, ord.OrderDate
 OFFSET 1000 ROWS FETCH NEXT 100 ROWS ONLY
 
+--4. Заказы поставщикам, которые были исполнены за 2014й год с доставкой Road Freight или Post, добавьте название поставщика, имя контактного лица принимавшего заказ
+
+select po.PurchaseOrderID,year(po.ExpectedDeliveryDate) as year,s.SupplierName, p.FullName, dm.DeliveryMethodName
+from Purchasing.PurchaseOrders as po 
+INNER JOIN Application.DeliveryMethods as dm on (dm.DeliveryMethodID=po.DeliveryMethodID)
+INNER JOIN Purchasing.Suppliers as s on (s.SupplierID = po.SupplierID)
+INNER JOIN  Application.People as p on (p.PersonID = po.SupplierID and p.IsEmployee=1)
+WHERE dm.DeliveryMethodName in ('Road Freight','Post') 
+and year(po.ExpectedDeliveryDate) =2014
+
