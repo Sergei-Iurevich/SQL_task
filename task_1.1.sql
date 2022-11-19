@@ -49,3 +49,21 @@ INNER JOIN  Application.People as p on (p.PersonID = po.SupplierID and p.IsEmplo
 WHERE dm.DeliveryMethodName in ('Road Freight','Post') 
 and year(po.ExpectedDeliveryDate) =2014
 
+--5. 10 последних по дате продаж с именем клиента и именем сотрудника, который оформил заказ.
+
+select so.OrderID, apc.FullName as name_customer, aps.FullName as name_salesperson, so.OrderDate as orderdate
+from Sales.Orders as so 
+INNER JOIN Application.People as apc ON (apc.PersonID=so.CustomerID)
+INNER JOIN Application.People as aps on (aps.PersonID=so.SalespersonPersonID)
+ORDER BY orderdate desc
+OFFSET 0 rows FETCH NEXT 10 rows ONLY
+
+--6. Все ид и имена клиентов и их контактные телефоны, которые покупали товар Chocolate frogs 250g 
+
+SELECT so.CustomerID,ap.FullName, ap.PhoneNumber
+from Sales.OrderLines as sol
+INNER JOIN Warehouse.StockItems as wsi on (wsi.StockItemID=sol.StockItemID and wsi.StockItemName='Chocolate frogs 250g')
+INNER JOIN Sales.Orders as so on (so.OrderID=sol.OrderID)
+INNER JOIN Application.People as ap on (ap.PersonID=so.CustomerID)
+
+
